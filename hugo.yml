@@ -1,0 +1,25 @@
+baseURL: ""
+languageCode: en-us
+title: lcarilla
+theme: PaperMod
+
+params:
+  homeInfoParams:
+    Title: "Hey!"
+    Content: ""
+  socialIcons:
+    - name: github
+      url: https://github.com/lcarilla
+    - name: tryhackme
+      url: https://tryhackme.com/p/harald.derbei
+
+menu:
+  main:
+    - identifier: home
+      name: Home
+      url: /
+      weight: 10
+    - identifier: posts
+      name: Blog
+      url: /posts/
+      weight: 20

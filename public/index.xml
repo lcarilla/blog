@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>lcarilla</title>
+    <link>/</link>
+    <description>Recent content on lcarilla</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 05 Aug 2023 20:42:39 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Spring Custom User Context</title>
+      <link>/posts/usercontextspring/</link>
+      <pubDate>Sat, 05 Aug 2023 20:42:39 +0200</pubDate>
+      
+      <guid>/posts/usercontextspring/</guid>
+      <description>If you&amp;rsquo;re doing OAuth2/OIDC + JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user. This code extracts the &amp;ldquo;JWT Subject&amp;rdquo; which can be used as a unique identifier for users:
+SecurityContextHolder.getContext().getAuthentication().getName() Your User data model might look Something like this:
+@Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(unique = true) private String sub; ... } If we now want to get The User Object of the authenticated User, we would have to do something like this:</description>
+    </item>
+    
+    <item>
+      <title>Why you should use Linux 🐧</title>
+      <link>/posts/linux/</link>
+      <pubDate>Mon, 24 Jul 2023 21:50:40 +0200</pubDate>
+      
+      <guid>/posts/linux/</guid>
+      <description>Use Arch or Debian The two base distros in the Linux desktop realm
+Download:
+latest debian iso
+latest arch iso
+1: Free and open source You want to be able to fully trust you operating system? You can view every line of code of the operating system you&amp;rsquo;re running. Why would you pay for proprietary closed source bloat if you can easily install the Linux distro of your choice?
+2: Community driven There is no company behind Linux The Linux foundation is not trying to make money but instead deliver a good, lightweight kernel</description>
+    </item>
+    
+    <item>
+      <title>Hosting a mirror</title>
+      <link>/posts/archmirror/</link>
+      <pubDate>Mon, 24 Jul 2023 18:14:30 +0200</pubDate>
+      
+      <guid>/posts/archmirror/</guid>
+      <description>Mirrors are used by most Linux Distros to distribute packages and installer images. This post documents the setup of an Arch Linux mirror. The most common way to keep you mirror in sync is rsync
+Checking disk usage rsync -avzhn rsync://mirror.lcarilla.de/archlinux/ Use this command to check this total size of an rsync module to check how much space you need on your server
+Web server setup You need to set up an HTTP(S) server to distribute the files.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Spring Custom User Context | lcarilla</title>
+<meta name="keywords" content="">
+<meta name="description" content="If you&rsquo;re doing OAuth2/OIDC &#43; JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user. This code extracts the &ldquo;JWT Subject&rdquo; which can be used as a unique identifier for users:
+SecurityContextHolder.getContext().getAuthentication().getName() Your User data model might look Something like this:
+@Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(unique = true) private String sub; ... } If we now want to get The User Object of the authenticated User, we would have to do something like this:">
+<meta name="author" content="">
+<link rel="canonical" href="/posts/usercontextspring/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.3613efbd0b1772781e8f49935e973cae632a7f61471c05b17be155505ccf87b5.css" integrity="sha256-NhPvvQsXcngej0mTXpc8rmMqf2FHHAWxe&#43;FVUFzPh7U=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Spring Custom User Context" />
+<meta property="og:description" content="If you&rsquo;re doing OAuth2/OIDC &#43; JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user. This code extracts the &ldquo;JWT Subject&rdquo; which can be used as a unique identifier for users:
+SecurityContextHolder.getContext().getAuthentication().getName() Your User data model might look Something like this:
+@Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(unique = true) private String sub; ... } If we now want to get The User Object of the authenticated User, we would have to do something like this:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/usercontextspring/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-08-05T20:42:39+02:00" />
+<meta property="article:modified_time" content="2023-08-05T20:42:39+02:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spring Custom User Context"/>
+<meta name="twitter:description" content="If you&rsquo;re doing OAuth2/OIDC &#43; JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user. This code extracts the &ldquo;JWT Subject&rdquo; which can be used as a unique identifier for users:
+SecurityContextHolder.getContext().getAuthentication().getName() Your User data model might look Something like this:
+@Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(unique = true) private String sub; ... } If we now want to get The User Object of the authenticated User, we would have to do something like this:"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Spring Custom User Context",
+      "item": "/posts/usercontextspring/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Spring Custom User Context",
+  "name": "Spring Custom User Context",
+  "description": "If you\u0026rsquo;re doing OAuth2/OIDC + JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user. This code extracts the \u0026ldquo;JWT Subject\u0026rdquo; which can be used as a unique identifier for users:\nSecurityContextHolder.getContext().getAuthentication().getName() Your User data model might look Something like this:\n@Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(unique = true) private String sub; ... } If we now want to get The User Object of the authenticated User, we would have to do something like this:",
+  "keywords": [
+    
+  ],
+  "articleBody": "If you’re doing OAuth2/OIDC + JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user. This code extracts the “JWT Subject” which can be used as a unique identifier for users:\nSecurityContextHolder.getContext().getAuthentication().getName() Your User data model might look Something like this:\n@Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; @Column(unique = true) private String sub; ... } If we now want to get The User Object of the authenticated User, we would have to do something like this:\nString sub = SecurityContextHolder.getContext().getAuthentication().getName(); Optional\u003cUser\u003e optionalUser = userRepository.findBySub(sub); if (optionalUser.isPresent()) { doSomething(); } else { doSomethingElse(); } The UserRespository:\npublic interface UserRepository extends JpaRepository\u003cUser, Long\u003e { Optional\u003cUser\u003e findBySub(String sub); } What if we had a ThreadLocal Object (just like the SecurityContextHolder) which holds a User object the JWT Subject belongs to The UserContextHolder is just a few lines of code:\npublic class UserContextHolder { private static final ThreadLocal\u003cUser\u003e userThreadLocal = new ThreadLocal\u003c\u003e(); public static User getUser() { return userThreadLocal.get(); } public static void setUser(User user) { userThreadLocal.set(user); } public static void clearUser() { userThreadLocal.remove(); } } Now we need to set up a “middleware” (or, how it’s called in Spring: interceptor) that sets the User for each incoming request. This code will check if the User already exists in the database. If so, the ThreadLocal User will be set to the existsing User. If not, a new user with the sub will be created The preHandle() method will be called before the Request is passed to the Controller.\n@Component @AllArgsConstructor public class UserInterceptor implements HandlerInterceptor { private final UserRepository userRepository; @Override public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception { String sub = SecurityContextHolder.getContext() .getAuthentication().getName(); Optional\u003cUser\u003e optionalUser = userRepository.findBySub(sub); if (optionalUser.isPresent()) { UserContextHolder.setUser(optionalUser.get()); } else { User user = userRepository.save(new User(0L, sub)); UserContextHolder.setUser(user); } return true; } } The last thing that must be done is to register our Interceptor/middleware We also need to do some fancy shit to get our userRepository in there. (@Autowiring the constructor, for some random reason) Add or exclude PathPatters, for example on public routes/endpoints:\n@Configuration @EnableWebMvc public class WebConfiguration implements WebMvcConfigurer { private final ApplicationContext applicationContext; @Autowired public WebConfiguration(ApplicationContext applicationContext) { this.applicationContext = applicationContext; } @Override public void addInterceptors(InterceptorRegistry registry) { UserRepository userRepository = applicationContext.getBean( UserRepository.class ); registry.addInterceptor(new UserInterceptor(userRepository)) .addPathPatterns(\"/**\") .excludePathPatterns(\"/api/public/**\"); } } ",
+  "wordCount" : "391",
+  "inLanguage": "en",
+  "datePublished": "2023-08-05T20:42:39+02:00",
+  "dateModified": "2023-08-05T20:42:39+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/posts/usercontextspring/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "lcarilla",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="lcarilla (Alt + H)">lcarilla</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/posts/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Spring Custom User Context
+    </h1>
+    <div class="post-meta">&lt;span title=&#39;2023-08-05 20:42:39 &#43;0200 CEST&#39;&gt;August 5, 2023&lt;/span&gt;
+
+</div>
+  </header> 
+  <div class="post-content"><p>If you&rsquo;re doing OAuth2/OIDC + JWT with Spring, you might be using the ThreadLocal SecurityContextHandler to get Data about the authorized user.
+This code extracts the &ldquo;JWT Subject&rdquo; which can be used as a unique identifier for users:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>SecurityContextHolder.<span style="color:#a6e22e">getContext</span>().<span style="color:#a6e22e">getAuthentication</span>().<span style="color:#a6e22e">getName</span>()
+</span></span></code></pre></div><p>Your User data model might look Something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Entity</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Id</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GeneratedValue</span>(strategy <span style="color:#f92672">=</span> GenerationType.<span style="color:#a6e22e">IDENTITY</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Long id;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Column</span>(unique <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String sub;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If we now want to get The User Object of the authenticated User, we would have to do something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>String sub <span style="color:#f92672">=</span> SecurityContextHolder.<span style="color:#a6e22e">getContext</span>().<span style="color:#a6e22e">getAuthentication</span>().<span style="color:#a6e22e">getName</span>();
+</span></span><span style="display:flex;"><span>Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> optionalUser <span style="color:#f92672">=</span> userRepository.<span style="color:#a6e22e">findBySub</span>(sub);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (optionalUser.<span style="color:#a6e22e">isPresent</span>()) {
+</span></span><span style="display:flex;"><span>    doSomething();
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    doSomethingElse();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The UserRespository:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">UserRepository</span> <span style="color:#66d9ef">extends</span> JpaRepository<span style="color:#f92672">&lt;</span>User, Long<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">findBySub</span>(String sub);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>What if we had a ThreadLocal Object (just like the SecurityContextHolder) which holds a User object the JWT Subject belongs to
+The UserContextHolder is just a few lines of code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserContextHolder</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> ThreadLocal<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> userThreadLocal <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadLocal<span style="color:#f92672">&lt;&gt;</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> User <span style="color:#a6e22e">getUser</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> userThreadLocal.<span style="color:#a6e22e">get</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setUser</span>(User user) {
+</span></span><span style="display:flex;"><span>        userThreadLocal.<span style="color:#a6e22e">set</span>(user);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">clearUser</span>() {
+</span></span><span style="display:flex;"><span>        userThreadLocal.<span style="color:#a6e22e">remove</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Now we need to set up a &ldquo;middleware&rdquo; (or, how it&rsquo;s called in Spring: interceptor) that sets the User for each incoming request.
+This code will check if the User already exists in the database. If so, the ThreadLocal User will be set to the existsing User. If not, a new user with the sub will be created
+The preHandle() method will be called before the Request is passed to the Controller.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@AllArgsConstructor</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserInterceptor</span> <span style="color:#66d9ef">implements</span> HandlerInterceptor {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> UserRepository userRepository;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">preHandle</span>(
+</span></span><span style="display:flex;"><span>            HttpServletRequest request,
+</span></span><span style="display:flex;"><span>            HttpServletResponse response,
+</span></span><span style="display:flex;"><span>            Object handler) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>        String sub <span style="color:#f92672">=</span> SecurityContextHolder.<span style="color:#a6e22e">getContext</span>()
+</span></span><span style="display:flex;"><span>                        .<span style="color:#a6e22e">getAuthentication</span>().<span style="color:#a6e22e">getName</span>();
+</span></span><span style="display:flex;"><span>        Optional<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> optionalUser <span style="color:#f92672">=</span> userRepository.<span style="color:#a6e22e">findBySub</span>(sub);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (optionalUser.<span style="color:#a6e22e">isPresent</span>()) {
+</span></span><span style="display:flex;"><span>            UserContextHolder.<span style="color:#a6e22e">setUser</span>(optionalUser.<span style="color:#a6e22e">get</span>());
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            User user <span style="color:#f92672">=</span> userRepository.<span style="color:#a6e22e">save</span>(<span style="color:#66d9ef">new</span> User(0L, sub));
+</span></span><span style="display:flex;"><span>            UserContextHolder.<span style="color:#a6e22e">setUser</span>(user);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The last thing that must be done is to register our Interceptor/middleware
+We also need to do some fancy shit to get our userRepository in there.
+(@Autowiring the constructor, for some random reason)
+Add or exclude PathPatters, for example on public routes/endpoints:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableWebMvc</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WebConfiguration</span> <span style="color:#66d9ef">implements</span> WebMvcConfigurer {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ApplicationContext applicationContext;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">WebConfiguration</span>(ApplicationContext applicationContext) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">applicationContext</span> <span style="color:#f92672">=</span> applicationContext;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addInterceptors</span>(InterceptorRegistry registry) {
+</span></span><span style="display:flex;"><span>        UserRepository userRepository <span style="color:#f92672">=</span> applicationContext.<span style="color:#a6e22e">getBean</span>(
+</span></span><span style="display:flex;"><span>            UserRepository.<span style="color:#a6e22e">class</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        registry.<span style="color:#a6e22e">addInterceptor</span>(<span style="color:#66d9ef">new</span> UserInterceptor(userRepository))
+</span></span><span style="display:flex;"><span>                .<span style="color:#a6e22e">addPathPatterns</span>(<span style="color:#e6db74">&#34;/**&#34;</span>)
+</span></span><span style="display:flex;"><span>                .<span style="color:#a6e22e">excludePathPatterns</span>(<span style="color:#e6db74">&#34;/api/public/**&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="">lcarilla</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
