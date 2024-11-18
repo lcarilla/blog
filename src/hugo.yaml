@@ -1,0 +1,17 @@
+baseURL: https://lcarilla.de/
+languageCode: en-us
+title: Luis Carilla
+theme: "PaperMod"
+params:
+  homeInfoParams:
+    Title: "Hey!"
+    Content: "Just my personal home page"
+  socialIcons:
+    - name: github
+      url: https://github.com/lcarilla
+    - name: linkedin
+      url: https://www.linkedin.com/in/luis-carilla-ternero-292a33284/
+markup:
+  highlight:
+    guessSyntax: true
+    lineNos: false
